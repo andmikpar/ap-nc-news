@@ -21,12 +21,16 @@ const getArticles = (request, response, next) => {
 };
 
 const getArticleById = (request, response, next) => {
-  const articleId = request.params;
-  findArticleById(articleId)
+  const { article_id } = request.params;
+  findArticleById(article_id)
     .then((article) => {
       response.status(200).send({ article });
     })
     .catch(next);
 };
 
-module.exports = { getTopics, getArticles, getArticleById };
+module.exports = {
+  getTopics,
+  getArticles,
+  getArticleById,
+};
