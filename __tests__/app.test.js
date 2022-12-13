@@ -6,7 +6,6 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
 const db = require('../db/connection');
-const { expect } = require('@jest/globals');
 
 afterAll(() => db.end());
 
@@ -80,46 +79,6 @@ describe('GET/api/articles', () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toEqual('Not Found');
-      });
-  });
-});
-
-describe.only('GET/api/articles/:article_id', () => {
-  test('status 200, responds with article object', () => {
-    return request(app)
-      .get('/api/articles/3')
-      .expect(200)
-      .then(({ body }) => {
-        const { article } = body;
-        expect(article[0]).toEqual(
-          expect.objectContaining({
-            author: expect.any(String),
-            title: expect.any(String),
-            article_id: expect.any(Number),
-            body: expect.any(String),
-            topic: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-          })
-        );
-      });
-  });
-  test('status 400 when article_id is invalid ', () => {
-    return request(app)
-      .get('/api/articles/three')
-      .expect(400)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe('Bad Request');
-      });
-  });
-  test('status 404 when article_id is valid but not in database', () => {
-    return request(app)
-      .get('/api/articles/300')
-      .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe('Not Found');
       });
   });
 });
