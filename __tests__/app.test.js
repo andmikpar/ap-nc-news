@@ -6,8 +6,6 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
 const db = require('../db/connection');
-const { expect } = require('@jest/globals');
-const { coerce } = require('yargs');
 
 afterAll(() => db.end());
 
