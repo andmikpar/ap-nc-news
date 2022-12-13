@@ -1,4 +1,4 @@
-const { findTopics } = require('../models/app.models');
+const { findTopics, findArticles } = require('../models/app.models');
 
 const getTopics = (request, response, next) => {
   findTopics()
@@ -8,4 +8,12 @@ const getTopics = (request, response, next) => {
     .catch(next);
 };
 
-module.exports = { getTopics };
+const getArticles = (request, response, next) => {
+  findArticles()
+    .then((articles) => {
+      response.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+module.exports = { getTopics, getArticles };
