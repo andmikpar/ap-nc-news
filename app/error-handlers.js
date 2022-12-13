@@ -17,7 +17,6 @@ const sqlInputErrors = (err, request, response, next) => {
 };
 
 const handle500errors = (err, request, response, next) => {
-  console.log(err);
   response.status(500).send({ err });
 };
 
