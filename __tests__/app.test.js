@@ -5,6 +5,7 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
 const db = require('../db/connection');
+const { expect } = require('@jest/globals');
 
 afterAll(() => db.end());
 
@@ -17,7 +18,7 @@ describe('GET/api/topics', () => {
       .expect(200)
       .then((result) => {
         const topics = result.body;
-        expect(topics).toBeInstanceOf(Array);
+        expect(topics).toHaveLength(3);
         topics.forEach((topic) => {
           expect(topic).toEqual(
             expect.objectContaining({
