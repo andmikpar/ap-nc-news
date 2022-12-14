@@ -2,7 +2,9 @@ const {
   findTopics,
   findArticles,
   findArticleById,
+  findArticleComments,
 } = require('../models/app.models');
+const checkIfExists = require('../utils');
 
 const getTopics = (request, response, next) => {
   findTopics()
@@ -31,7 +33,15 @@ const getArticleById = (request, response, next) => {
 
 const getCommentsByArticleId = (request, response, next) => {
   const { article_id } = request.params;
-  findArticleComments(article_id)
+
+  const promises = [findArticleComments(article_id)];
+  if (article_id !== undefined) {
+    promises.push(checkIfExists(article_id));
+  }
+  Promise.all(promises)
+    .then((resolvedArray) => {
+      return resolvedArray[0];
+    })
     .then((comments) => {
       response.status(200).send({ comments });
     })

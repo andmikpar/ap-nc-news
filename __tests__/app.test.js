@@ -6,7 +6,6 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
 const db = require('../db/connection');
-const { expect } = require('@jest/globals');
 
 afterAll(() => db.end());
 
@@ -146,13 +145,13 @@ describe('GET/api/articles/:article_id/comments', () => {
         expect(comments).toBeSortedBy('created_at', { descending: true });
       });
   });
-  test('status 404 when article has no comments', () => {
+  test('status 200 and empty array when article has no comments', () => {
     return request(app)
       .get('/api/articles/11/comments')
-      .expect(404)
+      .expect(200)
       .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe('Not Found');
+        const { comments } = body;
+        expect(comments).toEqual([]);
       });
   });
   test('status 400 when article_id is invalid ', () => {
