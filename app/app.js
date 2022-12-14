@@ -2,6 +2,7 @@ const {
   getTopics,
   getArticles,
   getArticleById,
+  getCommentsByArticleId,
 } = require('../app/controllers/app.controllers');
 const {
   badPath,
@@ -17,7 +18,7 @@ const app = express();
 app.get('/api/topics', getTopics);
 app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id', getArticleById);
-
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 app.all('*', badPath);
 
 app.use(customErrorHandler);

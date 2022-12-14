@@ -29,8 +29,18 @@ const getArticleById = (request, response, next) => {
     .catch(next);
 };
 
+const getCommentsByArticleId = (request, response, next) => {
+  const { article_id } = request.params;
+  findArticleComments(article_id)
+    .then((comments) => {
+      response.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getArticles,
   getArticleById,
+  getCommentsByArticleId,
 };
