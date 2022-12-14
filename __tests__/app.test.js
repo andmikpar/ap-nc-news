@@ -6,7 +6,6 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
 const db = require('../db/connection');
-const { expect } = require('@jest/globals');
 
 afterAll(() => db.end());
 
@@ -110,6 +109,64 @@ describe('GET/api/articles/:article_id', () => {
   test('status 404 when article_id is valid but not in database', () => {
     return request(app)
       .get('/api/articles/300')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Not Found');
+      });
+  });
+});
+
+describe('GET/api/articles/:article_id/comments', () => {
+  test('status 200, returns an array of comments with correct properties', () => {
+    return request(app)
+      .get('/api/articles/3/comments')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toHaveLength(2);
+        expect(comments[0]).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+          })
+        );
+      });
+  });
+  test('comments are ordered by most recent', () => {
+    return request(app)
+      .get('/api/articles/3/comments')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeSortedBy('created_at', { descending: true });
+      });
+  });
+  test('status 200 and empty array when article has no comments', () => {
+    return request(app)
+      .get('/api/articles/11/comments')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toEqual([]);
+      });
+  });
+  test('status 400 when article_id is invalid ', () => {
+    return request(app)
+      .get('/api/articles/one/comments')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+
+  test('status 404 when article_id is valid but not in database', () => {
+    return request(app)
+      .get('/api/articles/56/comments')
       .expect(404)
       .then(({ body }) => {
         const { msg } = body;
