@@ -81,9 +81,11 @@ const patchVotes = (request, response, next) => {
 };
 
 const getUsers = (request, response, next) => {
-  findUsers().then((users) => {
-    response.status(200).send({ users });
-  });
+  findUsers()
+    .then((users) => {
+      response.status(200).send({ users });
+    })
+    .catch(next);
 };
 
 module.exports = {
