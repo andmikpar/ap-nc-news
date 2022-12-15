@@ -27,10 +27,7 @@ const getArticles = (request, response, next) => {
 
   Promise.all(promises)
     .then((resolvedArray) => {
-      return resolvedArray[0];
-    })
-    .then((articles) => {
-      response.status(200).send({ articles });
+      response.status(200).send({ articles: resolvedArray[0] });
     })
     .catch(next);
 };
@@ -53,10 +50,7 @@ const getCommentsByArticleId = (request, response, next) => {
   }
   Promise.all(promises)
     .then((resolvedArray) => {
-      return resolvedArray[0];
-    })
-    .then((comments) => {
-      response.status(200).send({ comments });
+      response.status(200).send({ comments: resolvedArray[0] });
     })
     .catch(next);
 };
@@ -82,10 +76,7 @@ const patchVotes = (request, response, next) => {
   }
   Promise.all(promises)
     .then((resolvedArray) => {
-      return resolvedArray[0];
-    })
-    .then((updatedArticle) => {
-      response.status(200).send({ updatedArticle });
+      response.status(200).send({ updatedArticle: resolvedArray[0] });
     })
     .catch(next);
 };
