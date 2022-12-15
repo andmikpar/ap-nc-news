@@ -3,6 +3,7 @@ const {
   findArticles,
   findArticleById,
   findArticleComments,
+  addComment,
 } = require('../models/app.models');
 const checkIfExists = require('../utils');
 
@@ -48,9 +49,21 @@ const getCommentsByArticleId = (request, response, next) => {
     .catch(next);
 };
 
+const postComment = (request, response, next) => {
+  const { username, body } = request.body;
+  const { article_id } = request.params;
+
+  addComment(username, body, article_id)
+    .then((addedComment) => {
+      response.status(200).send({ addedComment });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getArticles,
   getArticleById,
   getCommentsByArticleId,
+  postComment,
 };
