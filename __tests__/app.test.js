@@ -6,6 +6,7 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
 const db = require('../db/connection');
+const { expect } = require('@jest/globals');
 
 afterAll(() => db.end());
 
@@ -376,6 +377,108 @@ describe('GET/api/users', () => {
             })
           );
         });
+      });
+  });
+});
+
+describe('10. GET /api/articles (queries)', () => {
+  test('status 200, returns array of articles with topic specified in query', () => {
+    return request(app)
+      .get('/api/articles?topic=cats')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: 'cats',
+            })
+          );
+        });
+      });
+  });
+
+  test('status 200 and empty array when topic exists but no articles match', () => {
+    return request(app)
+      .get('/api/articles?topic=paper')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toEqual([]);
+      });
+  });
+
+  test('status 200, returns articles sorted by specified column', () => {
+    return request(app)
+      .get('/api/articles?sorted_by=article_id')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy('article_id', { descending: true });
+      });
+  });
+  test('status 200, returns appropriate items when given query and sort by ', () => {
+    return request(app)
+      .get('/api/articles?topic=mitch&sorted_by=article_id')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(11);
+        expect(articles).toBeSortedBy('article_id', { descending: true });
+
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: 'mitch',
+            })
+          );
+        });
+      });
+  });
+  test('status 200, results are ordered by ascending when specified', () => {
+    return request(app)
+      .get('/api/articles?sorted_by=article_id&ordered_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy('article_id', { ascending: true });
+      });
+  });
+  test('status 200, results are ordered by descending by default', () => {
+    return request(app)
+      .get('/api/articles?sorted_by=article_id')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy('article_id', { descending: true });
+      });
+  });
+  test('status 404 and error message when query topic doesnt exist', () => {
+    return request(app)
+      .get('/api/articles/?topic=sport')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Not Found');
+      });
+  });
+  test('status 400 and error message when sort_by column doesnt exist', () => {
+    return request(app)
+      .get('/api/articles/?sorted_by=length')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('status 400 and error messge when order is invalid', () => {
+    return request(app)
+      .get('/api/articles/?ordered_by=alphabetical')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
       });
   });
 });

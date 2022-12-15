@@ -6,18 +6,39 @@ findTopics = (request, response, next) => {
   });
 };
 
-findArticles = (request, response, next) => {
-  return db
-    .query(
-      `SELECT articles.article_id, articles.author , articles.title, articles.topic, articles.created_at, articles.votes, COUNT(comments.article_id) 
+findArticles = (topic, sorted_by = 'created_at', ordered_by = 'DESC') => {
+  const allowToSortBy = [
+    'article_id',
+    'title',
+    'author',
+    'body',
+    'created_at',
+    'votes',
+  ];
+  const requestedOrder = ['ASC', 'DESC'];
+  if (
+    !allowToSortBy.includes(sorted_by.toLowerCase()) ||
+    !requestedOrder.includes(ordered_by.toUpperCase())
+  ) {
+    return Promise.reject({ status: 400, msg: 'Bad Request' });
+  }
+  const sqlParams = [];
+
+  let sqlQuery = `SELECT articles.article_id, articles.author , articles.title, articles.topic, articles.created_at, articles.votes, COUNT(comments.article_id) 
       AS comment_count FROM articles 
       LEFT JOIN comments 
-      ON articles.article_id = comments.article_id Group BY articles.article_id 
-      ORDER BY created_at DESC;`
-    )
-    .then((result) => {
-      return result.rows;
-    });
+      ON articles.article_id = comments.article_id `;
+
+  if (topic !== undefined) {
+    sqlQuery += `WHERE topic = $1 `;
+    sqlParams.push(topic);
+  }
+
+  sqlQuery += `GROUP BY articles.article_id  ORDER BY ${sorted_by} ${ordered_by};`;
+
+  return db.query(sqlQuery, sqlParams).then((result) => {
+    return result.rows;
+  });
 };
 
 findArticleById = (article_id) => {

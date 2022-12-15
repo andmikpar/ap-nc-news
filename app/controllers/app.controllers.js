@@ -18,7 +18,17 @@ const getTopics = (request, response, next) => {
 };
 
 const getArticles = (request, response, next) => {
-  findArticles()
+  const { topic, sorted_by, ordered_by } = request.query;
+
+  const promises = [findArticles(topic, sorted_by, ordered_by)];
+  if (topic !== undefined) {
+    promises.push(checkIfExists('topics', 'slug', topic));
+  }
+
+  Promise.all(promises)
+    .then((resolvedArray) => {
+      return resolvedArray[0];
+    })
     .then((articles) => {
       response.status(200).send({ articles });
     })
@@ -35,11 +45,11 @@ const getArticleById = (request, response, next) => {
 };
 
 const getCommentsByArticleId = (request, response, next) => {
-  const { article_id } = request.params;
+  const article_idNum = request.params.article_id;
 
-  const promises = [findArticleComments(article_id)];
-  if (article_id !== undefined) {
-    promises.push(checkIfExists(article_id));
+  const promises = [findArticleComments(article_idNum)];
+  if (article_idNum !== undefined) {
+    promises.push(checkIfExists('articles', 'article_id', article_idNum));
   }
   Promise.all(promises)
     .then((resolvedArray) => {
@@ -63,12 +73,12 @@ const postComment = (request, response, next) => {
 };
 
 const patchVotes = (request, response, next) => {
-  const { article_id } = request.params;
+  const article_idNum = request.params.article_id;
   const { inc_votes } = request.body;
 
-  const promises = [updateVoteCount(article_id, inc_votes)];
-  if (article_id !== undefined) {
-    promises.push(checkIfExists(article_id));
+  const promises = [updateVoteCount(article_idNum, inc_votes)];
+  if (article_idNum !== undefined) {
+    promises.push(checkIfExists('articles', 'article_id', article_idNum));
   }
   Promise.all(promises)
     .then((resolvedArray) => {
