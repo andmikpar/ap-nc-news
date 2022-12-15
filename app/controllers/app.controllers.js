@@ -5,6 +5,7 @@ const {
   findArticleComments,
   addComment,
   updateVoteCount,
+  findUsers,
 } = require('../models/app.models');
 const checkIfExists = require('../utils');
 
@@ -79,6 +80,14 @@ const patchVotes = (request, response, next) => {
     .catch(next);
 };
 
+const getUsers = (request, response, next) => {
+  findUsers()
+    .then((users) => {
+      response.status(200).send({ users });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getArticles,
@@ -86,4 +95,5 @@ module.exports = {
   getCommentsByArticleId,
   postComment,
   patchVotes,
+  getUsers,
 };

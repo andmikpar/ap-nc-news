@@ -66,6 +66,12 @@ updateVoteCount = (article_id, inc_votes) => {
     });
 };
 
+findUsers = (request, response, next) => {
+  return db.query(`SELECT * FROM users;`).then((result) => {
+    return result.rows;
+  });
+};
+
 module.exports = {
   findTopics,
   findArticles,
@@ -73,4 +79,5 @@ module.exports = {
   findArticleComments,
   addComment,
   updateVoteCount,
+  findUsers,
 };

@@ -11,6 +11,17 @@ afterAll(() => db.end());
 
 beforeEach(() => seed(testData));
 
+describe('app.all Bad Path', () => {
+  test('status 404 and message not found when path incorrect', () => {
+    return request(app)
+      .get('/api/articled')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual('Not Found');
+      });
+  });
+});
+
 describe('GET/api/topics', () => {
   test('status 200, returns an array of object in correct format', () => {
     return request(app)
@@ -27,15 +38,6 @@ describe('GET/api/topics', () => {
             })
           );
         });
-      });
-  });
-
-  test('status 404 and message not found when path incorrect', () => {
-    return request(app)
-      .get('/api/topical')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toEqual('Not Found');
       });
   });
 });
@@ -353,6 +355,27 @@ describe('PATCH /api/articles/:article_id', () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe('Bad Request');
+      });
+  });
+});
+
+describe('GET/api/users', () => {
+  test('status 200, returns an array of user objects', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
       });
   });
 });
