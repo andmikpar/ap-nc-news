@@ -4,6 +4,7 @@ const {
   getArticleById,
   getCommentsByArticleId,
   postComment,
+  patchVotes,
 } = require('../app/controllers/app.controllers');
 const {
   badPath,
@@ -23,6 +24,8 @@ app.get('/api/articles/:article_id', getArticleById);
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
 app.post('/api/articles/:article_id/comments', postComment);
+
+app.patch('/api/articles/:article_id', patchVotes);
 
 app.all('*', badPath);
 

@@ -4,6 +4,7 @@ const {
   findArticleById,
   findArticleComments,
   addComment,
+  updateVoteCount,
 } = require('../models/app.models');
 const checkIfExists = require('../utils');
 
@@ -60,10 +61,29 @@ const postComment = (request, response, next) => {
     .catch(next);
 };
 
+const patchVotes = (request, response, next) => {
+  const { article_id } = request.params;
+  const { inc_votes } = request.body;
+
+  const promises = [updateVoteCount(article_id, inc_votes)];
+  if (article_id !== undefined) {
+    promises.push(checkIfExists(article_id));
+  }
+  Promise.all(promises)
+    .then((resolvedArray) => {
+      return resolvedArray[0];
+    })
+    .then((updatedArticle) => {
+      response.status(200).send({ updatedArticle });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getArticles,
   getArticleById,
   getCommentsByArticleId,
   postComment,
+  patchVotes,
 };

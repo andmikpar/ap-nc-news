@@ -272,3 +272,87 @@ describe('POST /api/articles/:article_id/comments', () => {
       });
   });
 });
+
+describe('PATCH /api/articles/:article_id', () => {
+  test('status 200, returns updated article when votes are being added', () => {
+    const patchBody = { inc_votes: 10 };
+    return request(app)
+      .patch('/api/articles/1')
+      .send(patchBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            votes: 110,
+          })
+        );
+      });
+  });
+
+  test('status 200, returns updated article when votes are being taken away', () => {
+    const patchBody = { inc_votes: -10 };
+    return request(app)
+      .patch('/api/articles/1')
+      .send(patchBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            votes: 90,
+          })
+        );
+      });
+  });
+
+  test('status 400 when article_id is invalid', () => {
+    const patchBody = { inc_votes: 10 };
+    return request(app)
+      .patch('/api/articles/bananas')
+      .send(patchBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+
+  test('status 404 when article_id is valid but not in database', () => {
+    const patchBody = { inc_votes: 10 };
+    return request(app)
+      .patch('/api/articles/93')
+      .send(patchBody)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Not Found');
+      });
+  });
+
+  test('status 400 and error message when request body has invalid key', () => {
+    const patchBody = { add_votes: 10 };
+    return request(app)
+      .patch('/api/articles/1')
+      .send(patchBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+
+  test('status 400 and error message when request body has invalid value', () => {
+    const patchBody = { inc_votes: 'twelve' };
+    return request(app)
+      .patch('/api/articles/1')
+      .send(patchBody)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+});
