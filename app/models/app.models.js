@@ -29,7 +29,7 @@ findArticles = (topic, sorted_by = 'created_at', ordered_by = 'DESC') => {
       LEFT JOIN comments 
       ON articles.article_id = comments.article_id `;
 
-  if (topic !== undefined) {
+  if (topic) {
     sqlQuery += `WHERE topic = $1 `;
     sqlParams.push(topic);
   }
