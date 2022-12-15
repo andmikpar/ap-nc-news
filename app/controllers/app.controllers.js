@@ -18,9 +18,16 @@ const getTopics = (request, response, next) => {
 };
 
 const getArticles = (request, response, next) => {
-  findArticles()
-    .then((articles) => {
-      response.status(200).send({ articles });
+  const { topic, sorted_by, ordered_by } = request.query;
+
+  const promises = [findArticles(topic, sorted_by, ordered_by)];
+  if (topic !== undefined) {
+    promises.push(checkIfExists('topics', 'slug', topic));
+  }
+
+  Promise.all(promises)
+    .then((resolvedArray) => {
+      response.status(200).send({ articles: resolvedArray[0] });
     })
     .catch(next);
 };
@@ -35,18 +42,15 @@ const getArticleById = (request, response, next) => {
 };
 
 const getCommentsByArticleId = (request, response, next) => {
-  const { article_id } = request.params;
+  const article_idNum = request.params.article_id;
 
-  const promises = [findArticleComments(article_id)];
-  if (article_id !== undefined) {
-    promises.push(checkIfExists(article_id));
+  const promises = [findArticleComments(article_idNum)];
+  if (article_idNum !== undefined) {
+    promises.push(checkIfExists('articles', 'article_id', article_idNum));
   }
   Promise.all(promises)
     .then((resolvedArray) => {
-      return resolvedArray[0];
-    })
-    .then((comments) => {
-      response.status(200).send({ comments });
+      response.status(200).send({ comments: resolvedArray[0] });
     })
     .catch(next);
 };
@@ -63,19 +67,16 @@ const postComment = (request, response, next) => {
 };
 
 const patchVotes = (request, response, next) => {
-  const { article_id } = request.params;
+  const article_idNum = request.params.article_id;
   const { inc_votes } = request.body;
 
-  const promises = [updateVoteCount(article_id, inc_votes)];
-  if (article_id !== undefined) {
-    promises.push(checkIfExists(article_id));
+  const promises = [updateVoteCount(article_idNum, inc_votes)];
+  if (article_idNum !== undefined) {
+    promises.push(checkIfExists('articles', 'article_id', article_idNum));
   }
   Promise.all(promises)
     .then((resolvedArray) => {
-      return resolvedArray[0];
-    })
-    .then((updatedArticle) => {
-      response.status(200).send({ updatedArticle });
+      response.status(200).send({ updatedArticle: resolvedArray[0] });
     })
     .catch(next);
 };
