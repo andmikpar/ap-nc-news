@@ -11,6 +11,17 @@ afterAll(() => db.end());
 
 beforeEach(() => seed(testData));
 
+describe('app.all Bad Path', () => {
+  test('status 404 and message not found when path incorrect', () => {
+    return request(app)
+      .get('/api/articled')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual('Not Found');
+      });
+  });
+});
+
 describe('GET/api/topics', () => {
   test('status 200, returns an array of object in correct format', () => {
     return request(app)
@@ -27,15 +38,6 @@ describe('GET/api/topics', () => {
             })
           );
         });
-      });
-  });
-
-  test('status 404 and message not found when path incorrect', () => {
-    return request(app)
-      .get('/api/topical')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toEqual('Not Found');
       });
   });
 });
