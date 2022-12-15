@@ -174,3 +174,101 @@ describe('GET/api/articles/:article_id/comments', () => {
       });
   });
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+  test('status 200, returns posted comment', () => {
+    const newComment = {
+      username: 'butter_bridge',
+      body: 'Really good article',
+    };
+    return request(app)
+      .post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(200)
+      .then(({ body }) => {
+        const { addedComment } = body;
+        expect(addedComment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            body: 'Really good article',
+            votes: expect.any(Number),
+            author: 'butter_bridge',
+            article_id: 3,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+
+  test('status 400, when article_id is invalid', () => {
+    const newComment = {
+      username: 'butter_bridge',
+      body: 'Really good article',
+    };
+    return request(app)
+      .post('/api/articles/banana/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('status 404, when article_id is valid but not in database', () => {
+    const newComment = {
+      username: 'butter_bridge',
+      body: 'Really good article',
+    };
+    return request(app)
+      .post('/api/articles/32/comments')
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Not Found');
+      });
+  });
+  test('status 400 when request has invalid key', () => {
+    const newComment = {
+      usedname: 'butter_bridge',
+      body: 'Really good article',
+    };
+    return request(app)
+      .post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+  test('status 400 when request body contains invalid value', () => {
+    const newComment = {
+      username: 'butter_bridge',
+      body: undefined,
+    };
+    return request(app)
+      .post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+
+  test('status 404 when given username not found', () => {
+    const newComment = {
+      username: 'johnSmith',
+      body: 'Really good article',
+    };
+    return request(app)
+      .post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Not Found');
+      });
+  });
+});
