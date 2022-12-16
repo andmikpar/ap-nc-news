@@ -7,6 +7,7 @@ const {
   patchVotes,
   getUsers,
   deleteCommentbyId,
+  getApi,
 } = require('../app/controllers/app.controllers');
 const {
   badPath,
@@ -19,6 +20,8 @@ const express = require('express');
 
 const app = express();
 app.use(express.json());
+
+app.get('/api', getApi);
 
 app.get('/api/topics', getTopics);
 app.get('/api/articles', getArticles);
