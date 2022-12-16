@@ -1,3 +1,4 @@
+const fs = require('fs/promises');
 const {
   findTopics,
   findArticles,
@@ -8,7 +9,16 @@ const {
   findUsers,
   removeComment,
 } = require('../models/app.models');
-const checkIfExists = require('../utils');
+const { checkIfExists, findEndpoints } = require('../utils');
+
+const getApi = (request, response, next) => {
+  return fs
+    .readFile('./endpoints.json', 'utf8')
+    .then((endpoints) => {
+      response.status(200).send({ endpoints: JSON.parse(endpoints) });
+    })
+    .catch(next);
+};
 
 const getTopics = (request, response, next) => {
   findTopics()
@@ -111,4 +121,5 @@ module.exports = {
   patchVotes,
   getUsers,
   deleteCommentbyId,
+  getApi,
 };

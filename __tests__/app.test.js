@@ -6,7 +6,6 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
 const db = require('../db/connection');
-
 afterAll(() => db.end());
 
 beforeEach(() => seed(testData));
@@ -539,6 +538,28 @@ describe('DELETE /api/comments/:comment_id', () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe('Not Found');
+      });
+  });
+});
+
+describe('get api', () => {
+  test.only('status 200, returns json object of all available endpoints', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        const { endpoints } = body;
+        expect(Object.keys(endpoints)).toEqual([
+          'GET /api',
+          'GET /api/topics',
+          'GET /api/articles',
+          'GET /api/articles/:article_id',
+          'GET /api/articles/:article_id/comments',
+          'POST /api/articles/:article_id/comments',
+          'PATCH /api/articles/:article_id',
+          'GET /api/users',
+          'DELETE /api/comments/:comment_id',
+        ]);
       });
   });
 });
