@@ -93,12 +93,11 @@ const getUsers = (request, response, next) => {
 const deleteCommentbyId = (request, response, next) => {
   const { comment_id } = request.params;
 
-  checkIfExists('comments', 'comment_id', comment_id)
-    .then(() => {
-      removeComment(comment_id);
-    })
+  removeComment(comment_id)
     .then((result) => {
-      response.sendStatus(204);
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Not Found' });
+      } else response.sendStatus(204);
     })
     .catch(next);
 };
