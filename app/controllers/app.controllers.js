@@ -6,6 +6,7 @@ const {
   addComment,
   updateVoteCount,
   findUsers,
+  removeComment,
 } = require('../models/app.models');
 const checkIfExists = require('../utils');
 
@@ -89,6 +90,19 @@ const getUsers = (request, response, next) => {
     .catch(next);
 };
 
+const deleteCommentbyId = (request, response, next) => {
+  const { comment_id } = request.params;
+
+  checkIfExists('comments', 'comment_id', comment_id)
+    .then(() => {
+      removeComment(comment_id);
+    })
+    .then((result) => {
+      response.sendStatus(204);
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getArticles,
@@ -97,4 +111,5 @@ module.exports = {
   postComment,
   patchVotes,
   getUsers,
+  deleteCommentbyId,
 };
