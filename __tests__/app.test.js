@@ -93,7 +93,7 @@ describe('GET/api/articles/:article_id', () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article[0]).toEqual(
+        expect(article).toEqual(
           expect.objectContaining({
             article_id: 3,
           })
@@ -479,6 +479,37 @@ describe('10. GET /api/articles (queries)', () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe('Bad Request');
+      });
+  });
+});
+
+describe(' GET /api/articles/:article_id (comment count)', () => {
+  test('status 200, responds with correct article and includes comment count when article has comments', () => {
+    return request(app)
+      .get('/api/articles/3')
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: 3,
+            comment_count: '2',
+          })
+        );
+      });
+  });
+  test('status 200, responds with correct article and includes comment count when comment count is 0', () => {
+    return request(app)
+      .get('/api/articles/7')
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: 7,
+            comment_count: '0',
+          })
+        );
       });
   });
 });
