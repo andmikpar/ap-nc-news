@@ -6,6 +6,7 @@ const {
   addComment,
   updateVoteCount,
   findUsers,
+  removeComment,
 } = require('../models/app.models');
 const checkIfExists = require('../utils');
 
@@ -89,6 +90,18 @@ const getUsers = (request, response, next) => {
     .catch(next);
 };
 
+const deleteCommentbyId = (request, response, next) => {
+  const { comment_id } = request.params;
+
+  removeComment(comment_id)
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Not Found' });
+      } else response.sendStatus(204);
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getArticles,
@@ -97,4 +110,5 @@ module.exports = {
   postComment,
   patchVotes,
   getUsers,
+  deleteCommentbyId,
 };

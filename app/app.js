@@ -6,6 +6,7 @@ const {
   postComment,
   patchVotes,
   getUsers,
+  deleteCommentbyId,
 } = require('../app/controllers/app.controllers');
 const {
   badPath,
@@ -28,6 +29,8 @@ app.get('/api/users', getUsers);
 app.post('/api/articles/:article_id/comments', postComment);
 
 app.patch('/api/articles/:article_id', patchVotes);
+
+app.delete('/api/comments/:comment_id', deleteCommentbyId);
 
 app.all('*', badPath);
 

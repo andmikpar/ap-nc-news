@@ -6,7 +6,6 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 
 const db = require('../db/connection');
-const { expect } = require('@jest/globals');
 
 afterAll(() => db.end());
 
@@ -510,6 +509,36 @@ describe(' GET /api/articles/:article_id (comment count)', () => {
             comment_count: '0',
           })
         );
+      });
+  });
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+  test('status 204 and return no content message', () => {
+    return request(app)
+      .delete('/api/comments/2')
+      .expect(204)
+      .then((body) => {
+        expect(body.res.statusMessage).toBe('No Content');
+      });
+  });
+  test('status 400 when comment id is invalid', () => {
+    return request(app)
+      .delete('/api/comments/one')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad Request');
+      });
+  });
+
+  test('status 404 when comment id is valid but doesnt exist in database', () => {
+    return request(app)
+      .delete('/api/comments/45')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Not Found');
       });
   });
 });
