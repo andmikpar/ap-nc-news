@@ -543,7 +543,7 @@ describe('DELETE /api/comments/:comment_id', () => {
 });
 
 describe('get api', () => {
-  test.only('status 200, returns json object of all available endpoints', () => {
+  test('status 200, returns json object of all available endpoints', () => {
     return request(app)
       .get('/api')
       .expect(200)
