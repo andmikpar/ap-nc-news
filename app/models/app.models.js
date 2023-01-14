@@ -14,6 +14,7 @@ findArticles = (topic, sorted_by = 'created_at', ordered_by = 'DESC') => {
     'body',
     'created_at',
     'votes',
+    'comment_count',
   ];
   const requestedOrder = ['ASC', 'DESC'];
   if (
