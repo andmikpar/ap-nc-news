@@ -1,6 +1,6 @@
 # Northcoders News API
 
-This project is a an API built using Express, node and PSQL. It hosts news articles, which clients can search by topics, or authors, they can be ordered by ID number or date, and can be sorted in ascending order or the default descending.
+This project is a an API built using Express, node and PSQL. It hosts news articles, which clients can search by topics, or they can be sorted by ID number, date, title, author, votes or comment counts, and can be ordered in ascending order or the default descending.
 
 You can find the hosted version of the API by following this link ---> https://nc-news-k43r.onrender.com
 
